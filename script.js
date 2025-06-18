@@ -9,6 +9,9 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 let projects = [];
 let currentProjectId = null;
 
+// Authentication state
+let isAuthenticated = false;
+
 // CSV file operations
 function saveToCSV() {
     // Create CSV header
@@ -607,22 +610,49 @@ async function saveProject(project) {
     }
 }
 
-async function deleteProject(h2sNo) {
-    try {
-        const { error } = await supabase
-            .from('projects')
-            .delete()
-            .eq('h2s_no', h2sNo);
-            
-        if (error) throw error;
-        
-        await loadProjects(); // Reload to get fresh data
-        alert('Project deleted successfully!');
-    } catch (error) {
-        console.error('Error deleting project:', error);
-        alert('Error deleting project. Please try again.');
+// Authentication functions
+async function handleLogin(event) {
+    event.preventDefault();
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    // Check for hardcoded credentials
+    if (username === 'CS' && password === 'CS') {
+        // Store login state
+        localStorage.setItem('isLoggedIn', 'true');
+        handleSuccessfulLogin();
+        return false;
+    } else {
+        alert('Invalid credentials. Please try again.');
+        return false;
     }
 }
+
+function checkAuth() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+        handleSuccessfulLogin();
+    }
+}
+
+function handleSuccessfulLogin() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    loadProjects(); // Load projects after successful login
+}
+
+function handleLogout() {
+    localStorage.removeItem('isLoggedIn');
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('mainContent').style.display = 'none';
+    projects = [];
+    updateDashboard();
+}
+
+// Check authentication on page load
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+});
 
 // Show/Hide sections
 function showDashboard() {
@@ -862,6 +892,11 @@ function getReceiptRows() {
     })).filter(receipt => receipt.checkNo || receipt.amount);
 }
 
+// Check authentication on page load
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+});
+
 // Initialize the page
 document.addEventListener('DOMContentLoaded', async () => {
     // Attempt to load data from Supabase when page loads
@@ -929,7 +964,16 @@ function updateDashboard() {
             <td>${receivable.toLocaleString()}</td>
             <td>${toBeBilled.toLocaleString()}</td>
             <td>${billedPercentage}%</td>
-            <td></td>
+            <td>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" onclick="showProjectForm('edit'); loadProjectDetails('${project.h2sNo}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="confirmDeleteProject('${project.h2sNo}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
         `;
         tableBody.appendChild(row);
     });

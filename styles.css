@@ -1,14 +1,70 @@
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+}
+
+/* Login Form Styles */
+#loginForm .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+#loginForm .card-body {
+    padding: 40px;
+}
+
+#loginForm .fa-user-circle {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+#loginForm .input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+#loginForm .form-control {
+    border-left: none;
+}
+
+#loginForm .form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+#loginForm .btn-primary {
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
 .card {
     margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
 }
 
 .table {
     margin-bottom: 0;
+    vertical-align: middle;
 }
 
 .table thead {
     background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
 }
 
 .form-control:focus {
